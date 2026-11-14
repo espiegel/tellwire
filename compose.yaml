@@ -1,0 +1,4 @@
+# `docker compose up --build` from the repository root starts the local demo.
+# Production uses deploy/compose.prod.yaml (see docs/deployment.md).
+include:
+  - deploy/compose.yaml

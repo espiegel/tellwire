@@ -1,0 +1,67 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink-950: #0b0a08;
+  --color-ink-900: #11100d;
+  --color-ink-850: #16140f;
+  --color-ink-800: #1d1a14;
+  --color-ink-700: #2b261d;
+  --color-ink-600: #3b3426;
+  --color-sand-100: #efe7d6;
+  --color-sand-300: #d9c9a3;
+  --color-sand-400: #d9b26f;
+  --color-sand-500: #c79a4a;
+  --color-spice-500: #c4682a;
+  --color-muted: #8f8570;
+  --color-ok: #8fbf6a;
+  --color-warn: #e0a93b;
+  --color-bad: #e0604f;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-sand-100);
+  font-family: var(--font-sans);
+  overscroll-behavior: none;
+}
+
+/* xterm fills its container; keep the scrollbar subtle and on-theme. */
+.xterm {
+  height: 100%;
+  padding: 6px 8px;
+}
+.xterm-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-600) transparent;
+}
+.xterm .xterm-viewport {
+  background-color: transparent !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sand-400);
+  outline-offset: 2px;
+}
+
+.desert-line {
+  background: linear-gradient(90deg, transparent, var(--color-sand-500), var(--color-spice-500), transparent);
+  height: 1px;
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

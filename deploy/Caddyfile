@@ -1,0 +1,36 @@
+# Edge reverse proxy: one origin for the browser.
+#   /ws   -> gateway (WebSocket)
+#   *     -> frontend (static files)
+# /metrics and /readyz of the gateway are deliberately NOT routed.
+#
+# SITE_ADDRESS=:8080            local demo, plain HTTP (default)
+# SITE_ADDRESS=play.dunemud.net production: Caddy obtains and renews a Let's Encrypt certificate.
+{$SITE_ADDRESS::8080} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	handle /healthz {
+		respond "ok" 200
+	}
+
+	# Caddy sets X-Forwarded-For to the real client address (it overwrites
+	# any client-supplied value unless trusted_proxies is configured, which it is not).
+	# The gateway only believes that header when the peer is in GATEWAY_TRUSTED_PROXIES.
+	handle /ws {
+		reverse_proxy gateway:8080 {
+			flush_interval -1
+			transport http {
+				read_timeout 0
+				write_timeout 0
+			}
+		}
+	}
+
+	handle {
+		reverse_proxy frontend:80
+	}
+}
