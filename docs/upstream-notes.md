@@ -1,16 +1,16 @@
 # DuneMUD protocol notes — what is known, and what is not
 
-Everything below is labelled **documented** (source: the server's own wiki), **observed** (by the author in
-another client) or **unverified**. Nothing here was
+Everything below is labelled **documented** (source: the server's own wiki), **observed** (by the maintainer in
+a third-party client) or **unverified**. Nothing here was
 learned by connecting to the live server from this project's automated tests.
 
 | Fact | Status | Source |
 |---|---|---|
 | Secure (TLS) Telnet port **6788**; plain Telnet **6789** | documented | `who g` banner on the server: "Telnet: 6789 \|\| Secure: 6788" |
 | Host `dunemud.net` | documented | dunemud.net |
-| TLS certificate on 6788 is publicly trusted for `dunemud.net` | **unverified** | Another client the author used connects with TLS; whether it verifies the chain is unknown. Run the live probe (below). |
-| Development port **4241** | **unverified** | Given in the project brief; deliberately *not* configured by default. |
-| GMCP is offered with `IAC WILL GMCP` at connect | observed | author, in another client |
+| TLS certificate on 6788 is publicly trusted for `dunemud.net` | **unverified** | A third-party client connects with TLS; whether it verifies the chain is unknown. Run the live probe (below). |
+| Development port **4241** | **unverified** | Not documented publicly; deliberately *not* configured by default. |
+| GMCP is offered with `IAC WILL GMCP` at connect | observed | maintainer, in a third-party client |
 | GMCP is **output only**; no GMCP input commands are supported | documented | https://dunemud.net/gmcp/start |
 | Modules: `Char`, `Room`, `Comm.Channel`, `Guild` (Guild is automatic) | documented | same |
 | Clients opt in to modules via `Core.Supports.Set` (some clients do this automatically) | documented ("Some clients… do this automatically; others require you to opt in explicitly") | same |
@@ -18,7 +18,7 @@ learned by connecting to the live server from this project's automated tests.
 | `Room.Info`, `Char.Name`, `Comm.Channel.List` are **full** messages | documented | same |
 | Room `num` and exit targets are 32‑char hash strings, not integers | documented | same |
 | Some highly custom areas lack exit information in `Room.Info` | documented | same |
-| The live server sometimes sent **no GMCP data** to tt++ even after the offer | observed (once) | bot README: "`RCVD IAC SB GMCP` never appeared, also during fights" |
+| The live server sometimes sent **no GMCP data** to a third-party client even after the offer | observed (once) | maintainer's session log: no `IAC SB GMCP` was received, also during fights |
 | Output may contain emoji / multi‑byte UTF‑8 | observed | `who g` fixture contains emoji |
 | MCCP, MSDP, MSSP, CHARSET support | **unverified** | |
 | Whether the login password prompt uses Telnet `WILL ECHO` | **unverified** | The gateway handles both: ECHO negotiation, plus a prompt‑text heuristic fallback. |

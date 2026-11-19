@@ -58,4 +58,5 @@ volumes:
 networks:
   default:
     ipam:
+      # Fixed subnet so GATEWAY_TRUSTED_PROXIES (above) can name the edge proxy. Keep the two in sync.
       config: [{ subnet: 172.29.0.0/24 }]

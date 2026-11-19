@@ -118,13 +118,13 @@ make e2e         # real Chromium through the real gateway to the mock MUD
 make demo        # docker compose up --build
 ```
 
-See [`docs/development.md`](docs/development.md). CI runs the same checks on every push and pull request.
+See [`docs/development.md`](docs/development.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md). Report vulnerabilities per [`SECURITY.md`](SECURITY.md). CI runs the same checks on every push and pull request.
 
 ## Status and limitations
 
-Tellwire works and the author plays on it, but it is early software. Please read this before relying on it.
+Tellwire works and the maintainer plays on it, but it is early software. Please read this before relying on it.
 
-- **Automated tests use a mock MUD only.** The author has exercised the client against the real DuneMUD
+- **Automated tests use a mock MUD only.** The maintainer has exercised the client against the real DuneMUD
   server by hand and it worked, but no automated test contacts it. An opt-in probe exists:
   `TELLWIRE_LIVE=1 go test -v -run TestLive ./gateway/internal/live/`.
 - **No performance claims.** The 500-connection figure is a configured limit. There is no load test or
