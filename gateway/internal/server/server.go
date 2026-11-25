@@ -35,7 +35,10 @@ type Server struct {
 	shuttingDown atomic.Bool
 	baseCtx      context.Context
 	baseCancel   context.CancelFunc
-	wg           sync.WaitGroup
+	// wgMu orders wg.Add (handleWS) before wg.Wait (Shutdown): once Shutdown has
+	// set shuttingDown under wgMu, no new session can be registered.
+	wgMu sync.Mutex
+	wg   sync.WaitGroup
 }
 
 // New validates cfg-derived resources (CA file) and returns a Server.
@@ -122,10 +125,15 @@ func (s *Server) originAllowed(r *http.Request) bool {
 }
 
 func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
+	s.wgMu.Lock()
 	if s.shuttingDown.Load() {
+		s.wgMu.Unlock()
 		http.Error(w, "shutting down", http.StatusServiceUnavailable)
 		return
 	}
+	s.wg.Add(1)
+	s.wgMu.Unlock()
+	defer s.wg.Done()
 	if !s.originAllowed(r) {
 		s.met.end("origin_rejected")
 		s.log.Warn("websocket origin rejected", "origin", r.Header.Get("Origin"))
@@ -143,8 +151,6 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 	}
 	ws.SetReadLimit(s.cfg.MaxMessageBytes)
 
-	s.wg.Add(1)
-	defer s.wg.Done()
 	s.met.total.Add(1)
 	s.met.active.Add(1)
 	defer s.met.active.Add(-1)
@@ -155,7 +161,9 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 // Shutdown stops accepting sessions, notifies live ones and waits for them to
 // finish (or ctx to expire).
 func (s *Server) Shutdown(ctx context.Context) error {
+	s.wgMu.Lock()
 	s.shuttingDown.Store(true)
+	s.wgMu.Unlock()
 	s.baseCancel()
 	done := make(chan struct{})
 	go func() { s.wg.Wait(); close(done) }()
